@@ -1,0 +1,37 @@
+{
+  "itemGroup.fullchest": "Full Chest Mod Tab",
+
+  "fullchest.configuration.title": "Full Chest Configs",
+  "fullchest.configuration.section.fullchest.common.toml": "Full Chest Configs",
+  "fullchest.configuration.section.fullchest.common.toml.title": "Full Chest Configs",
+  "fullchest.configuration.items": "Item List",
+  "fullchest.configuration.logDirtBlock": "Log Dirt Block",
+  "fullchest.configuration.magicNumberIntroduction": "Magic Number Text",
+  "fullchest.configuration.magicNumber": "Magic Number",
+
+  "tooltip.fullchest.capacity": "Capacity: %s",
+  "tooltip.fullchest.pages": "Pages: %s × %s",
+  "tooltip.fullchest.material": "Material:",
+
+  "creativetab.fullchest.fullchest_blocks": "Full Chest Chests",
+
+  "material.fullchest.dirt": "Dirt",
+  "material.fullchest.stone": "Stone",
+  "material.fullchest.copper": "Copper",
+  "material.fullchest.iron": "Iron",
+  "material.fullchest.gold": "Gold",
+  "material.fullchest.diamond": "Diamond",
+  "material.fullchest.emerald": "Emerald",
+  "material.fullchest.obsidian": "Obsidian",
+  "material.fullchest.netherite": "Netherite",
+
+  "block.fullchest.dirt_chest": "Dirt Chest",
+  "block.fullchest.stone_chest": "Stone Chest",
+  "block.fullchest.copper_chest": "Copper Chest",
+  "block.fullchest.iron_chest": "Iron Chest",
+  "block.fullchest.gold_chest": "Gold Chest",
+  "block.fullchest.diamond_chest": "Diamond Chest",
+  "block.fullchest.emerald_chest": "Emerald Chest",
+  "block.fullchest.obsidian_chest": "Obsidian Chest",
+  "block.fullchest.netherite_chest": "Netherite Chest"
+}
