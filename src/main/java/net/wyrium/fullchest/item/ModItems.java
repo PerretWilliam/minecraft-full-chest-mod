@@ -16,6 +16,10 @@ public class ModItems {
     public static final DeferredRegister<Item> ITEMS =
             DeferredRegister.create(Registries.ITEM, FullChest.MODID);
 
+    public static final DeferredHolder<Item, Item> CHEST_FORGE =
+            ITEMS.register("chest_forge",
+                    () -> new BlockItem(ModBlocks.CHEST_FORGE.get(), new Item.Properties()));
+
     // Use wildcard to accept BlockItem (or any future custom item)
     public static final Map<String, DeferredHolder<Item, ? extends Item>> BY_ID = new LinkedHashMap<>();
     public static final List<DeferredHolder<Item, ? extends Item>> ALL_ITEMS;

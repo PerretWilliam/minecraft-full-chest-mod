@@ -1,4 +1,5 @@
-// 1.21.1	2025-08-10T00:16:14.626368848	Block States: fullchest
+// 1.21.1	2025-08-10T10:06:23.470599588	Block States: fullchest
+2f3fc89fba38a20c1f9f80b97e709d9710de06b8 assets/fullchest/blockstates/chest_forge.json
 8e88900fff031e7f39205b13ec9d68849f9129bc assets/fullchest/blockstates/copper_chest.json
 9fcda2439f92d871ff1cca2dce4c2a392b685724 assets/fullchest/blockstates/diamond_chest.json
 46266ee9c47609633029faded8427213e4d68bf8 assets/fullchest/blockstates/dirt_chest.json
@@ -8,6 +9,7 @@ f6410efd1b3510716571c5fcb42635d4816ac8fe assets/fullchest/blockstates/emerald_ch
 afd4bea93d06896b0e984972f9df57cce072a71d assets/fullchest/blockstates/netherite_chest.json
 5ec51edd6d866c9072570e4075351e157a70a8d0 assets/fullchest/blockstates/obsidian_chest.json
 8fee114c0d2f1bc77113b16c2034a6940cbc3981 assets/fullchest/blockstates/stone_chest.json
+8eff5d0c7c98989fd12ed63c7db7f13ba2fbd369 assets/fullchest/models/block/chest_forge.json
 1ff973ce453766b1d2348a786bf6e1db524af5f2 assets/fullchest/models/block/copper_chest.json
 a0ecdca6296b2493ca2b8e977a31b6d6939b2aee assets/fullchest/models/block/diamond_chest.json
 70056cdfe267acd18a3995e284bf3b394826f4da assets/fullchest/models/block/dirt_chest.json

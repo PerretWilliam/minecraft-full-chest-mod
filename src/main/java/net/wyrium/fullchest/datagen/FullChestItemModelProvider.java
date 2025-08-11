@@ -20,6 +20,9 @@ public class FullChestItemModelProvider extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
+
+        withExistingParent("chest_forge", modLoc("block/chest_forge"));
+
         // Iterate over actually-registered chest blocks
         ModBlocks.ALL_CHESTS.forEach(holder -> {
             BaseChestBlock block = (BaseChestBlock) holder.get();

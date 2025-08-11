@@ -4,6 +4,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.wyrium.fullchest.block.ModBlocks;
 import net.wyrium.fullchest.block.entity.ModBlockEntities;
 import net.wyrium.fullchest.item.ModItems;
+import net.wyrium.fullchest.recipe.ModRecipeTypes;
 import net.wyrium.fullchest.screen.ModMenuTypes;
 import org.slf4j.Logger;
 
@@ -43,6 +44,7 @@ public class FullChest {
         ModItems.register(modEventBus);
         ModBlockEntities.register(modEventBus);
         ModMenuTypes.register(modEventBus);
+        ModRecipeTypes.register(modEventBus);
 
         // Register ourselves for server and other game events we are interested in.
         // Note that this is necessary if and only if we want *this* class (FullChest) to respond directly to events.

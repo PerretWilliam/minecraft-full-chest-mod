@@ -20,6 +20,16 @@ public class ModBlocks {
     public static final DeferredRegister<Block> BLOCKS =
             DeferredRegister.create(Registries.BLOCK, FullChest.MODID);
 
+    public static final DeferredHolder<
+            net.minecraft.world.level.block.Block,
+            net.minecraft.world.level.block.Block
+            > CHEST_FORGE = BLOCKS.register("chest_forge",
+            () -> new ChestForgeBlock(
+                    BlockBehaviour.Properties.of()
+                            .strength(2.5F)
+                            .requiresCorrectToolForDrops()
+            ));
+
     /**
      * Register a single chest block for the given spec.
      */

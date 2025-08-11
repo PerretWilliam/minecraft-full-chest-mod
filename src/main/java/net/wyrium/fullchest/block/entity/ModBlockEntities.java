@@ -19,6 +19,11 @@ public class ModBlockEntities {
         return ModBlocks.ALL_CHESTS.stream().map(DeferredHolder::get).toArray(Block[]::new);
     }
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ChestForgeBlockEntity>> CHEST_FORGE_BE =
+            BLOCK_ENTITY_TYPES.register("chest_forge",
+                    () -> BlockEntityType.Builder.of(ChestForgeBlockEntity::new, ModBlocks.CHEST_FORGE.get())
+                            .build(null));
+
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BaseChestBlockEntity>> BASE_CHEST_BE =
             BLOCK_ENTITY_TYPES.register("base_chest",
                     () -> BlockEntityType.Builder.of(

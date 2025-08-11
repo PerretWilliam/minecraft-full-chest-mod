@@ -18,6 +18,8 @@ public class FullChestBlockStateProvider extends BlockStateProvider {
 
     @Override
     protected void registerStatesAndModels() {
+        chestForge();
+
         // Iterate all registered chest blocks
         for (var holder : ModBlocks.ALL_CHESTS) {
             BaseChestBlock block = (BaseChestBlock) holder.get();
@@ -37,5 +39,27 @@ public class FullChestBlockStateProvider extends BlockStateProvider {
 
         // all states -> same model
         getVariantBuilder(block).forAllStates(s -> ConfiguredModel.builder().modelFile(blockModel).build());
+    }
+
+    private void chestForge() {
+        var name = "chest_forge";
+
+        // Create a cube model with per-face textures (like crafting table style)
+        var top    = modLoc("block/forge_table_top");
+        var front  = modLoc("block/forge_table_front");
+        var side   = modLoc("block/forge_table_side");
+        var bottom = modLoc("block/forge_table_bottom");
+
+        // Parent: block/cube and specify each face texture explicitly
+        ModelFile forgeModel = models().withExistingParent(name, mcLoc("block/cube"))
+                .texture("particle", side)
+                .texture("down", bottom)
+                .texture("up", top)
+                .texture("north", front)  // front face
+                .texture("south", side)
+                .texture("east",  side)
+                .texture("west",  side);
+
+        simpleBlock(ModBlocks.CHEST_FORGE.get(), forgeModel);
     }
 }

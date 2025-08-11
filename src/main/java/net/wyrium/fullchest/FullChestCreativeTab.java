@@ -6,6 +6,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import net.wyrium.fullchest.block.ModBlocks;
 import net.wyrium.fullchest.item.ModItems;
 
 import java.util.function.Supplier;
@@ -21,6 +22,7 @@ public class FullChestCreativeTab {
                     .title(Component.translatable("creativetab." + FullChest.MODID + ".fullchest_blocks"))
                     // Put your item in the tab here...
                     .displayItems((parameters, output) -> {
+                        output.accept(ModItems.CHEST_FORGE.get());
                         output.accept(ModItems.DIRT_CHEST.get());
                         output.accept(ModItems.STONE_CHEST.get());
                         output.accept(ModItems.COPPER_CHEST.get());

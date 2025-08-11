@@ -12,20 +12,19 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.wyrium.fullchest.block.ModBlocks;
 import net.wyrium.fullchest.block.entity.ModBlockEntities;
+import net.wyrium.fullchest.screen.ChestForgeScreen;
 import net.wyrium.fullchest.screen.ModMenuTypes;
 import net.wyrium.fullchest.screen.PagedChestScreen;
 import net.wyrium.fullchest.template.BaseChestBlock;
 import net.wyrium.fullchest.template.BaseChestBlockItemRenderer;
 import net.wyrium.fullchest.template.BaseChestEntityRenderer;
-import net.wyrium.fullchest.template.ChestSpecs;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
@@ -58,6 +57,7 @@ public class FullChestClient {
     @SubscribeEvent
     public static void registerScreens(RegisterMenuScreensEvent event) {
         event.register(ModMenuTypes.PAGED_CHEST.get(), PagedChestScreen::new);
+        event.register(ModMenuTypes.CHEST_FORGE.get(), ChestForgeScreen::new);
     }
 
     @SubscribeEvent
@@ -67,6 +67,7 @@ public class FullChestClient {
             Item item = blockHolder.get().asItem();
 
             event.registerItem(new net.neoforged.neoforge.client.extensions.common.IClientItemExtensions() {
+                @NotNull
                 @Override
                 public BlockEntityWithoutLevelRenderer getCustomRenderer() {
                     // Lazy-create & cache one renderer per item
