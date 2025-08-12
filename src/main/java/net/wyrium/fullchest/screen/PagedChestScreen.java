@@ -6,10 +6,13 @@
     import net.minecraft.client.gui.GuiGraphics;
     import net.minecraft.network.chat.Component;
     import net.minecraft.resources.ResourceLocation;
+    import net.minecraft.sounds.SoundEvents;
     import net.minecraft.world.entity.player.Inventory;
     import net.minecraft.world.inventory.Slot;
     import net.wyrium.fullchest.FullChest;
     import org.jetbrains.annotations.NotNull;
+
+    import java.util.Objects;
 
     public class PagedChestScreen extends AbstractContainerScreen<PagedChestMenu> {
         private static final ResourceLocation BG =
@@ -33,11 +36,11 @@
             int x = leftPos + 8, y = topPos + 6;
 
             prevBtn = addRenderableWidget(Button.builder(Component.literal("<"), b -> {
-                if (minecraft != null) minecraft.gameMode.handleInventoryButtonClick(menu.containerId, 0);
+                if (minecraft != null) Objects.requireNonNull(minecraft.gameMode).handleInventoryButtonClick(menu.containerId, 0);
             }).pos(x + 75, y - 1).size(10, 10).build());
 
             nextBtn = addRenderableWidget(Button.builder(Component.literal(">"), b -> {
-                if (minecraft != null) minecraft.gameMode.handleInventoryButtonClick(menu.containerId, 1);
+                if (minecraft != null) Objects.requireNonNull(minecraft.gameMode).handleInventoryButtonClick(menu.containerId, 1);
             }).pos(x + 95, y - 1).size(10, 10).build());
 
             updateArrowsIfNeeded(); // premier état
@@ -100,6 +103,15 @@
             if(menu.getMaxPages() > 1) {
                 String txt = "Page " + (menu.getPage() + 1) + "/" + menu.getMaxPages();
                 g.drawString(this.font, txt, leftPos + imageWidth - 8 - this.font.width(txt), topPos + 6, 0x404040, false);
+            }
+        }
+
+        @Override
+        public void onClose() {
+            super.onClose();
+
+            if (this.minecraft != null && this.minecraft.player != null) {
+                this.minecraft.player.playSound(SoundEvents.CHEST_CLOSE, 1.0F, 1.0F);
             }
         }
     }

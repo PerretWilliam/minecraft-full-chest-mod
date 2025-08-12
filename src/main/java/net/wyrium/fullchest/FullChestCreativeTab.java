@@ -8,6 +8,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.wyrium.fullchest.block.ModBlocks;
 import net.wyrium.fullchest.item.ModItems;
+import net.wyrium.fullchest.template.ChestUpgradeItem;
 
 import java.util.function.Supplier;
 
@@ -32,6 +33,14 @@ public class FullChestCreativeTab {
                         output.accept(ModItems.DIAMOND_CHEST.get());
                         output.accept(ModItems.OBSIDIAN_CHEST.get());
                         output.accept(ModItems.NETHERITE_CHEST.get());
+
+                        // Upgrade items
+                        output.accept(ModItems.BASE_CHEST_UPGRADE.get());
+                        ModItems.ALL_UPGRADES.forEach(itemHolder -> {
+                            if (itemHolder.get() instanceof ChestUpgradeItem) {
+                                output.accept(itemHolder.get());
+                            }
+                        });
             }).build());
 
     // Register method

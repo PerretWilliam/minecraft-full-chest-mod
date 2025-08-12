@@ -14,8 +14,6 @@ import net.wyrium.fullchest.FullChest;
 import net.wyrium.fullchest.template.BaseChestBlock;
 import net.wyrium.fullchest.template.ChestSpec;
 
-import java.util.Map;
-
 @EventBusSubscriber(modid = FullChest.MODID, value = Dist.CLIENT)
 public class ClientTooltipHandler {
     @SubscribeEvent
@@ -25,31 +23,31 @@ public class ClientTooltipHandler {
         if (!(bi.getBlock() instanceof BaseChestBlock chest)) return;
 
         ChestSpec s = chest.spec();
-        int pageSize = 54; // grille vanilla 6x9
+        int pageSize = 54;
         int pages = Math.max(1, (int)Math.ceil(s.totalSlots() / (double)pageSize));
 
         // Capacity
-        e.getToolTip().add(Component.translatable("tooltip.fullchest.capacity",
+        e.getToolTip().add(Component.translatable("tooltip." + FullChest.MODID + ".capacity",
                         Component.literal(String.valueOf(s.totalSlots())))
                 .withStyle(ChatFormatting.GRAY));
 
         // Pages × pageSize (utile si total > 54)
         if (pages > 1) {
-            e.getToolTip().add(Component.translatable("tooltip.fullchest.pages",
+            e.getToolTip().add(Component.translatable("tooltip." + FullChest.MODID + ".pages",
                             Component.literal(String.valueOf(pages)),
                             Component.literal(String.valueOf(pageSize)))
                     .withStyle(ChatFormatting.DARK_GRAY));
         }
 
-        String materialKey = s.materialKey();        // e.g. "material.fullchest.copper"
-        int materialRgb    = s.materialColor();      // e.g. 0xB87333
+        String materialKey = s.materialKey(); // e.g. "material.fullchest.copper"
+        int materialRgb = s.materialColor(); // e.g. 0xB87333
 
         if (materialKey != null && !materialKey.isEmpty()) {
             Component matName = Component.translatable(materialKey)
                     .withStyle(Style.EMPTY.withColor(TextColor.fromRgb(materialRgb)));
 
             // Combine: "Material: " (gray) + matName (colored)
-            Component labelAndName = Component.translatable("tooltip.fullchest.material")
+            Component labelAndName = Component.translatable("tooltip." + FullChest.MODID + ".material")
                     .withStyle(ChatFormatting.GRAY)
                     .copy()
                     .append(" ")

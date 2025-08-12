@@ -25,7 +25,7 @@ public class BaseChestBlockEntity extends ChestBlockEntity implements MenuProvid
     private NonNullList<ItemStack> items;
 
     public BaseChestBlockEntity(BlockPos pos, BlockState state, ChestSpec spec) {
-        super(ModBlockEntities.BASE_CHEST_BE.get(), pos, state); // un seul type pour tous ces coffres
+        super(ModBlockEntities.BASE_CHEST_BE.get(), pos, state);
         this.spec = spec;
         this.items = NonNullList.withSize(spec.totalSlots(), ItemStack.EMPTY);
     }
@@ -46,7 +46,7 @@ public class BaseChestBlockEntity extends ChestBlockEntity implements MenuProvid
 
     @Nonnull @Override
     protected AbstractContainerMenu createMenu(int containerId, @Nonnull Inventory inv) {
-        return new PagedChestMenu(containerId, inv, this); // menu commun avec pagination
+        return new PagedChestMenu(containerId, inv, this);
     }
 
     @Override

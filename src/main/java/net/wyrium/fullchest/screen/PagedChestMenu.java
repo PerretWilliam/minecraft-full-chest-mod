@@ -1,5 +1,7 @@
 package net.wyrium.fullchest.screen;
 
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -13,9 +15,9 @@ public class PagedChestMenu extends AbstractContainerMenu {
     public static final int COLS = 9;
     public static final int VISIBLE = ROWS * COLS;
 
-    private final Container full;              // BE ou SimpleContainer (item)
-    private final PagedViewContainer view;     // vue paginée 54 slots
-    private final ContainerData data;          // [0]=page, [1]=total
+    private final Container full;
+    private final PagedViewContainer view; // Paged view 54 slots
+    private final ContainerData data; // [0]=page, [1]=total
 
     public PagedChestMenu(int id, Inventory playerInv, Container full) {
         super(ModMenuTypes.PAGED_CHEST.get(), id);
@@ -56,7 +58,7 @@ public class PagedChestMenu extends AbstractContainerMenu {
 
         // Page 0
         setPage(0);
-        // Le serveur pousse les valeurs aux clients
+
         sendAllDataToRemote();
     }
 
@@ -114,7 +116,6 @@ public class PagedChestMenu extends AbstractContainerMenu {
     @Override
     public boolean stillValid(@NotNull Player p) { return full.stillValid(p); }
 
-    // Shift-click (vanilla-like, limité à la page visible)
     @NotNull
     @Override
     public ItemStack quickMoveStack(@NotNull Player player, int index) {
@@ -142,7 +143,6 @@ public class PagedChestMenu extends AbstractContainerMenu {
     @Override
     public void removed(@NotNull Player player) {
         super.removed(player);
-        // FERMETURE correcte
         this.full.startOpen(player);
     }
 }

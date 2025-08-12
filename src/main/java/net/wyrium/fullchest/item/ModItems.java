@@ -7,6 +7,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.wyrium.fullchest.FullChest;
 import net.wyrium.fullchest.block.ModBlocks;
+import net.wyrium.fullchest.template.ChestUpgradeItem;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -21,8 +22,8 @@ public class ModItems {
                     () -> new BlockItem(ModBlocks.CHEST_FORGE.get(), new Item.Properties()));
 
     // Use wildcard to accept BlockItem (or any future custom item)
-    public static final Map<String, DeferredHolder<Item, ? extends Item>> BY_ID = new LinkedHashMap<>();
-    public static final List<DeferredHolder<Item, ? extends Item>> ALL_ITEMS;
+    public static final Map<String, DeferredHolder<Item, BlockItem>> BY_ID = new LinkedHashMap<>();
+    public static final List<DeferredHolder<Item, BlockItem>> ALL_ITEMS;
 
     // Named constants (typed as BlockItem since that's what we register)
     public static final DeferredHolder<Item, BlockItem> DIRT_CHEST;
@@ -35,27 +36,86 @@ public class ModItems {
     public static final DeferredHolder<Item, BlockItem> OBSIDIAN_CHEST;
     public static final DeferredHolder<Item, BlockItem> NETHERITE_CHEST;
 
+
     static {
         // Mirror ModBlocks.BY_ID to create matching BlockItems
         ModBlocks.BY_ID.forEach((id, blockHolder) -> {
-            DeferredHolder<Item, BlockItem> itemHolder = ITEMS.register(id + "_chest",
-                    () -> new BlockItem(blockHolder.get(), new Item.Properties()));
+            DeferredHolder<Item, BlockItem> itemHolder = ITEMS.register(
+                    id + "_chest",
+                    () -> new BlockItem(blockHolder.get(), new Item.Properties())
+            );
             BY_ID.put(id, itemHolder);
         });
 
         ALL_ITEMS = List.copyOf(BY_ID.values());
 
         // Assign named constants
-        DIRT_CHEST      = (DeferredHolder<Item, BlockItem>) BY_ID.get("dirt");
-        STONE_CHEST     = (DeferredHolder<Item, BlockItem>) BY_ID.get("stone");
-        COPPER_CHEST    = (DeferredHolder<Item, BlockItem>) BY_ID.get("copper");
-        IRON_CHEST      = (DeferredHolder<Item, BlockItem>) BY_ID.get("iron");
-        GOLD_CHEST      = (DeferredHolder<Item, BlockItem>) BY_ID.get("gold");
-        EMERALD_CHEST   = (DeferredHolder<Item, BlockItem>) BY_ID.get("emerald");
-        DIAMOND_CHEST   = (DeferredHolder<Item, BlockItem>) BY_ID.get("diamond");
-        OBSIDIAN_CHEST  = (DeferredHolder<Item, BlockItem>) BY_ID.get("obsidian");
-        NETHERITE_CHEST = (DeferredHolder<Item, BlockItem>) BY_ID.get("netherite");
+        DIRT_CHEST      = BY_ID.get("dirt");
+        STONE_CHEST     = BY_ID.get("stone");
+        COPPER_CHEST    = BY_ID.get("copper");
+        IRON_CHEST      = BY_ID.get("iron");
+        GOLD_CHEST      = BY_ID.get("gold");
+        EMERALD_CHEST   = BY_ID.get("emerald");
+        DIAMOND_CHEST   = BY_ID.get("diamond");
+        OBSIDIAN_CHEST  = BY_ID.get("obsidian");
+        NETHERITE_CHEST = BY_ID.get("netherite");
     }
+
+    // Register the items upgrade
+    public static final DeferredHolder<Item, Item> BASE_CHEST_UPGRADE =
+            ITEMS.register("base_chest_upgrade",
+                    () -> new Item(new Item.Properties()));
+
+    public static final DeferredHolder<Item, Item> DIRT_TO_STONE_UPGRADE =
+            ITEMS.register("dirt_chest_to_stone_chest",
+                    () -> new ChestUpgradeItem(new Item.Properties(),
+                            ModBlocks.DIRT_CHEST, ModBlocks.STONE_CHEST));
+
+    public static final DeferredHolder<Item, Item> STONE_TO_COPPER_UPGRADE =
+            ITEMS.register("stone_chest_to_copper_chest",
+                    () -> new ChestUpgradeItem(new Item.Properties(),
+                            ModBlocks.STONE_CHEST, ModBlocks.COPPER_CHEST));
+
+    public static final DeferredHolder<Item, Item> COPPER_TO_IRON_UPGRADE =
+            ITEMS.register("copper_chest_to_iron_chest",
+                    () -> new ChestUpgradeItem(new Item.Properties(),
+                            ModBlocks.COPPER_CHEST, ModBlocks.IRON_CHEST));
+
+    public static final DeferredHolder<Item, Item> IRON_TO_GOLD_UPGRADE =
+            ITEMS.register("iron_chest_to_gold_chest",
+                    () -> new ChestUpgradeItem(new Item.Properties(),
+                            ModBlocks.IRON_CHEST, ModBlocks.GOLD_CHEST));
+
+    public static final DeferredHolder<Item, Item> GOLD_TO_DIAMOND_UPGRADE =
+            ITEMS.register("gold_chest_to_diamond_chest",
+                    () -> new ChestUpgradeItem(new Item.Properties(),
+                            ModBlocks.GOLD_CHEST, ModBlocks.DIAMOND_CHEST));
+
+    public static final DeferredHolder<Item, Item> DIAMOND_TO_EMERALD_UPGRADE =
+            ITEMS.register("diamond_chest_to_emerald_chest",
+                    () -> new ChestUpgradeItem(new Item.Properties(),
+                            ModBlocks.DIAMOND_CHEST, ModBlocks.EMERALD_CHEST));
+
+    public static final DeferredHolder<Item, Item> EMERALD_TO_OBSIDIAN_UPGRADE =
+            ITEMS.register("emerald_chest_to_obsidian_chest",
+                    () -> new ChestUpgradeItem(new Item.Properties(),
+                            ModBlocks.EMERALD_CHEST, ModBlocks.OBSIDIAN_CHEST));
+
+    public static final DeferredHolder<Item, Item> OBSIDIAN_TO_NETHERITE_UPGRADE =
+            ITEMS.register("obsidian_chest_to_netherite_chest",
+                    () -> new ChestUpgradeItem(new Item.Properties(),
+                            ModBlocks.OBSIDIAN_CHEST, ModBlocks.NETHERITE_CHEST));
+
+    public static final List<DeferredHolder<Item, Item>> ALL_UPGRADES = List.of(
+            DIRT_TO_STONE_UPGRADE,
+            STONE_TO_COPPER_UPGRADE,
+            COPPER_TO_IRON_UPGRADE,
+            IRON_TO_GOLD_UPGRADE,
+            GOLD_TO_DIAMOND_UPGRADE,
+            DIAMOND_TO_EMERALD_UPGRADE,
+            EMERALD_TO_OBSIDIAN_UPGRADE,
+            OBSIDIAN_TO_NETHERITE_UPGRADE
+    );
 
     public static void register(net.neoforged.bus.api.IEventBus bus) {
         ITEMS.register(bus);

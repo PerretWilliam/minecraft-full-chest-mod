@@ -1,6 +1,8 @@
 package net.wyrium.fullchest.template;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+import net.wyrium.fullchest.sound.ChestSoundPack;
 
 // ChestSpec.java
 public record ChestSpec(
@@ -12,7 +14,8 @@ public record ChestSpec(
         ResourceLocation texRight,
         String materialKey,  // ex: "material.fullchest.iron"
         int materialColor,    // ex: 0xC0C0C0 (silver), 0xFFD700 (gold), 0xB9F2FF (diamond)
-        ResourceLocation particle // ex: "minecraft:block/iron_block"
+        ResourceLocation particle, // ex: "minecraft:block/iron_block"
+        ChestSoundPack sounds // // Per‑spec sound set
 ) {
     // Vanilla Grid 6x9
     public static final int ROWS = 6;

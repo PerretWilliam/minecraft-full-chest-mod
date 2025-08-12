@@ -3,6 +3,7 @@ package net.wyrium.fullchest.block.entity;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.wyrium.fullchest.FullChest;
@@ -39,7 +40,8 @@ public class ModBlockEntities {
                             allChestBlocks()
                     ).build(null));
 
-    public static void register(net.neoforged.bus.api.IEventBus bus) {
+    // Register Method
+    public static void register(IEventBus bus) {
         BLOCK_ENTITY_TYPES.register(bus);
     }
 }

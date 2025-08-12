@@ -49,7 +49,6 @@ public class ChestForgeRecipe implements Recipe<CraftingInput> {
     public boolean matches(@NotNull CraftingInput input, Level level) {
         if (level.isClientSide) return false;
 
-        // Ici on suppose 3x3 plein (comme ta table), sans offset:
         if (input.width() != width || input.height() != height) return false;
 
         // Test motif direct

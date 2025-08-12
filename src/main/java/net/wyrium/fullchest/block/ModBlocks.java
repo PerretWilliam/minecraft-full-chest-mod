@@ -4,10 +4,12 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.wyrium.fullchest.FullChest;
 import net.wyrium.fullchest.block.entity.ModBlockEntities;
+import net.wyrium.fullchest.sound.ModSoundTypes;
 import net.wyrium.fullchest.template.BaseChestBlock;
 import net.wyrium.fullchest.template.ChestSpec;
 import net.wyrium.fullchest.template.ChestSpecs;
@@ -24,10 +26,9 @@ public class ModBlocks {
             net.minecraft.world.level.block.Block,
             net.minecraft.world.level.block.Block
             > CHEST_FORGE = BLOCKS.register("chest_forge",
-            () -> new ChestForgeBlock(
-                    BlockBehaviour.Properties.of()
-                            .strength(2.5F)
-                            .requiresCorrectToolForDrops()
+            () -> new ChestForgeBlock(BlockBehaviour.Properties.of()
+                    .strength(2.5F)
+                    .requiresCorrectToolForDrops()
             ));
 
     /**
@@ -35,11 +36,7 @@ public class ModBlocks {
      */
     private static DeferredHolder<Block, Block> chest(String id, ChestSpec spec) {
         return BLOCKS.register(id + "_chest",
-                () -> new BaseChestBlock(
-                        BlockBehaviour.Properties.ofFullCopy(Blocks.CHEST),
-                        () -> ModBlockEntities.BASE_CHEST_BE.get(),
-                        spec
-                )
+                () -> new BaseChestBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CHEST).sound(ModSoundTypes.forSpec(spec)), ModBlockEntities.BASE_CHEST_BE::get, spec)
         );
     }
 
@@ -83,8 +80,8 @@ public class ModBlocks {
         NETHERITE_CHEST = BY_ID.get("netherite");
     }
 
-    /** Call this from your mod constructor to wire the register. */
-    public static void register(net.neoforged.bus.api.IEventBus bus) {
+    // Register Method
+    public static void register(IEventBus bus) {
         BLOCKS.register(bus);
     }
 }

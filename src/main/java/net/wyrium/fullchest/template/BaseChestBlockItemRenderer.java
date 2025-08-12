@@ -13,6 +13,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.ChestType;
+import org.jetbrains.annotations.NotNull;
 
 // BaseChestBlockItemRenderer.java
 public class BaseChestBlockItemRenderer extends BlockEntityWithoutLevelRenderer {
@@ -32,8 +33,8 @@ public class BaseChestBlockItemRenderer extends BlockEntityWithoutLevelRenderer 
     }
 
     @Override
-    public void renderByItem(ItemStack stack, ItemDisplayContext ctx, PoseStack pose,
-                             MultiBufferSource buffers, int packedLight, int packedOverlay) {
+    public void renderByItem(@NotNull ItemStack stack, @NotNull ItemDisplayContext ctx, @NotNull PoseStack pose,
+                             @NotNull MultiBufferSource buffers, int packedLight, int packedOverlay) {
         dispatcher.renderItem(fakeChest, pose, buffers, packedLight, packedOverlay);
     }
 }

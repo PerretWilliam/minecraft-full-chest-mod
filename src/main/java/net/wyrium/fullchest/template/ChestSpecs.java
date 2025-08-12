@@ -5,7 +5,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
 import net.wyrium.fullchest.FullChest;
+import net.wyrium.fullchest.sound.ChestSoundPack;
 
 public final class ChestSpecs {
 
@@ -18,7 +20,14 @@ public final class ChestSpecs {
             FullChest.rl("entity/chest/normal_chest_right"),
             "material.fullchest.dirt",
             0x8B5A2B,
-            ResourceLocation.parse("minecraft:block/dirt")
+            ResourceLocation.parse("minecraft:block/dirt"),
+            new ChestSoundPack(
+                    SoundEvents.GRASS_BREAK,
+                    SoundEvents.GRASS_STEP,
+                    SoundEvents.GRASS_PLACE,
+                    SoundEvents.GRASS_HIT,
+                    SoundEvents.GRASS_FALL
+            )
     );
 
     public static final ChestSpec STONE_SPEC = new ChestSpec(
@@ -29,7 +38,14 @@ public final class ChestSpecs {
             FullChest.rl("entity/chest/normal_chest_right"),
             "material.fullchest.stone",
             0xBFBFBF,
-            ResourceLocation.parse("minecraft:block/stone")
+            ResourceLocation.parse("minecraft:block/stone"),
+            new ChestSoundPack(
+                    SoundEvents.STONE_BREAK,
+                    SoundEvents.STONE_STEP,
+                    SoundEvents.STONE_PLACE,
+                    SoundEvents.STONE_HIT,
+                    SoundEvents.STONE_FALL
+            )
     );
 
     public static final ChestSpec COPPER_SPEC = new ChestSpec(
@@ -40,7 +56,14 @@ public final class ChestSpecs {
             FullChest.rl("entity/chest/normal_chest_right"),
             "material.fullchest.copper",
             0xc87456,
-            ResourceLocation.parse("minecraft:block/copper_block")
+            ResourceLocation.parse("minecraft:block/copper_block"),
+            new ChestSoundPack(
+                    SoundEvents.COPPER_BREAK,
+                    SoundEvents.COPPER_STEP,
+                    SoundEvents.COPPER_PLACE,
+                    SoundEvents.COPPER_HIT,
+                    SoundEvents.COPPER_FALL
+            )
     );
 
     public static final ChestSpec IRON_SPEC = new ChestSpec(
@@ -51,7 +74,14 @@ public final class ChestSpecs {
             FullChest.rl("entity/chest/normal_chest_right"),
             "material.fullchest.iron",
             0xC0C0C0,
-            ResourceLocation.parse("minecraft:block/iron_block")
+            ResourceLocation.parse("minecraft:block/iron_block"),
+            new ChestSoundPack(
+                    SoundEvents.METAL_BREAK,
+                    SoundEvents.METAL_STEP,
+                    SoundEvents.METAL_PLACE,
+                    SoundEvents.METAL_HIT,
+                    SoundEvents.METAL_FALL
+            )
     );
 
     public static final ChestSpec GOLD_SPEC = new ChestSpec(
@@ -62,7 +92,14 @@ public final class ChestSpecs {
             FullChest.rl("entity/chest/normal_chest_right"),
             "material.fullchest.gold",
             0xFFD700,
-            ResourceLocation.parse("minecraft:block/gold_block")
+            ResourceLocation.parse("minecraft:block/gold_block"),
+            new ChestSoundPack(
+                    SoundEvents.METAL_BREAK,
+                    SoundEvents.METAL_STEP,
+                    SoundEvents.METAL_PLACE,
+                    SoundEvents.METAL_HIT,
+                    SoundEvents.METAL_FALL
+            )
     );
 
     public static final ChestSpec EMERALD_SPEC = new ChestSpec(
@@ -73,7 +110,14 @@ public final class ChestSpecs {
             FullChest.rl("entity/chest/normal_chest_right"),
             "material.fullchest.emerald",
             0x00C853,
-            ResourceLocation.parse("minecraft:block/emerald_block")
+            ResourceLocation.parse("minecraft:block/emerald_block"),
+            new ChestSoundPack(
+                    SoundEvents.METAL_BREAK,
+                    SoundEvents.METAL_STEP,
+                    SoundEvents.METAL_PLACE,
+                    SoundEvents.METAL_HIT,
+                    SoundEvents.METAL_FALL
+            )
     );
 
     public static final ChestSpec DIAMOND_SPEC = new ChestSpec(
@@ -84,7 +128,14 @@ public final class ChestSpecs {
             FullChest.rl("entity/chest/normal_chest_right"),
             "material.fullchest.diamond",
             0x44E5FF,
-            ResourceLocation.parse("minecraft:block/diamond_block")
+            ResourceLocation.parse("minecraft:block/diamond_block"),
+            new ChestSoundPack(
+                    SoundEvents.METAL_BREAK,
+                    SoundEvents.METAL_STEP,
+                    SoundEvents.METAL_PLACE,
+                    SoundEvents.METAL_HIT,
+                    SoundEvents.METAL_FALL
+            )
     );
 
     public static final ChestSpec OBSIDIAN_SPEC = new ChestSpec(
@@ -95,7 +146,14 @@ public final class ChestSpecs {
             FullChest.rl("entity/chest/normal_chest_right"),
             "material.fullchest.obsidian",
             0x3b2754,
-            ResourceLocation.parse("minecraft:block/obsidian")
+            ResourceLocation.parse("minecraft:block/obsidian"),
+            new ChestSoundPack(
+                    SoundEvents.STONE_BREAK,
+                    SoundEvents.STONE_STEP,
+                    SoundEvents.STONE_PLACE,
+                    SoundEvents.STONE_HIT,
+                    SoundEvents.STONE_FALL
+            )
     );
 
     public static final ChestSpec NETHERITE_SPEC = new ChestSpec(
@@ -106,17 +164,23 @@ public final class ChestSpecs {
             FullChest.rl("entity/chest/normal_chest_right"),
             "material.fullchest.netherite",
             0x2f2829,
-            ResourceLocation.parse("minecraft:block/netherite_block")
+            ResourceLocation.parse("minecraft:block/netherite_block"),
+            new ChestSoundPack(
+                    SoundEvents.METAL_BREAK,
+                    SoundEvents.METAL_STEP,
+                    SoundEvents.METAL_PLACE,
+                    SoundEvents.METAL_HIT,
+                    SoundEvents.METAL_FALL
+            )
     );
 
-    // --- Central registry of specs for iteration (datagen, etc.) ---
+    // Central registry of specs for iteration (datagen, etc.)
     public static final List<ChestSpec> ALL = List.of(
             DIRT_SPEC, STONE_SPEC, COPPER_SPEC, IRON_SPEC, GOLD_SPEC,
             EMERALD_SPEC, DIAMOND_SPEC, OBSIDIAN_SPEC, NETHERITE_SPEC
     );
 
-    public static final Map<String, ChestSpec> BY_ID =
-            ALL.stream().collect(Collectors.toUnmodifiableMap(ChestSpec::id, s -> s));
+    public static final Map<String, ChestSpec> BY_ID = ALL.stream().collect(Collectors.toUnmodifiableMap(ChestSpec::id, s -> s));
 
     public static ChestSpec[] values() { return ALL.toArray(ChestSpec[]::new); }
 

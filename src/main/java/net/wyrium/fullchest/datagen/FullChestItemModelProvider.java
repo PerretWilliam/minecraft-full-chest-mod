@@ -9,6 +9,7 @@ import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.wyrium.fullchest.FullChest;
 import net.wyrium.fullchest.block.ModBlocks;
+import net.wyrium.fullchest.item.ModItems;
 import net.wyrium.fullchest.template.BaseChestBlock;
 import net.wyrium.fullchest.template.ChestSpec;
 
@@ -35,6 +36,20 @@ public class FullChestItemModelProvider extends ItemModelProvider {
 
             chestItemBuiltinEntity(name, particle);
         });
+
+        String baseChestId = ModItems.BASE_CHEST_UPGRADE.getId().getPath(); // Ensure the base upgrade item is registered
+        flatItem(baseChestId);
+
+        // ----- Items d’upgrade : item/generated + layer0 -----
+        ModItems.ALL_UPGRADES.forEach(roh -> {
+            String id = roh.getId().getPath(); // ex: "stone_chest_to_gold_chest"
+            flatItem(id);                      // models/item/<id>.json
+        });
+    }
+
+    /** item/generated avec layer0 = fullchest:item/<name> */
+    private void flatItem(String name) {
+        getBuilder(name).parent(new ModelFile.UncheckedModelFile("item/generated")).texture("layer0", modLoc("item/" + name));
     }
 
     /**
