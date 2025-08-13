@@ -9,9 +9,25 @@ import net.minecraft.sounds.SoundEvents;
 import net.wyrium.fullchest.FullChest;
 import net.wyrium.fullchest.sound.ChestSoundPack;
 
+/**
+ * Central registry of all predefined {@link ChestSpec} instances for the mod.
+ * <p>
+ * Each spec defines:
+ * <ul>
+ *   <li>An internal id used for lookups and upgrades.</li>
+ *   <li>Total slot capacity for the chest inventory.</li>
+ *   <li>Localization key for the block name.</li>
+ *   <li>Textures for single/left/right chest states.</li>
+ *   <li>Material key, representative color, and particle texture.</li>
+ *   <li>A {@link ChestSoundPack} providing break/place/step/hit/fall sounds.</li>
+ * </ul>
+ * <p>
+ * All specs are gathered into {@link #ALL} and indexed by id in {@link #BY_ID}.
+ * Use these collections for registration, lookups, or iteration.
+ */
 public final class ChestSpecs {
 
-    // --- Specs (your progression) ---
+    /** Dirt chest — minimal capacity, uses grass/dirt sounds and brownish tint. */
     public static final ChestSpec DIRT_SPEC = new ChestSpec(
             "dirt", 18,
             "block." + FullChest.MODID + ".dirt_chest",
@@ -30,6 +46,7 @@ public final class ChestSpecs {
             )
     );
 
+    /** Stone chest — small capacity, uses stone sounds and gray tint. */
     public static final ChestSpec STONE_SPEC = new ChestSpec(
             "stone", 27,
             "block." + FullChest.MODID + ".stone_chest",
@@ -48,6 +65,7 @@ public final class ChestSpecs {
             )
     );
 
+    /** Copper chest — moderate capacity, copper block particles, warm tint. */
     public static final ChestSpec COPPER_SPEC = new ChestSpec(
             "copper", 36,
             "block." + FullChest.MODID + ".copper_chest",
@@ -66,6 +84,7 @@ public final class ChestSpecs {
             )
     );
 
+    /** Iron chest — large capacity, silver tint, metal sounds. */
     public static final ChestSpec IRON_SPEC = new ChestSpec(
             "iron", 54,
             "block." + FullChest.MODID + ".iron_chest",
@@ -84,6 +103,7 @@ public final class ChestSpecs {
             )
     );
 
+    /** Gold chest — higher capacity, gold tint, reuses generic metal sounds. */
     public static final ChestSpec GOLD_SPEC = new ChestSpec(
             "gold", 72,
             "block." + FullChest.MODID + ".gold_chest",
@@ -102,6 +122,7 @@ public final class ChestSpecs {
             )
     );
 
+    /** Emerald chest — very high capacity, emerald tint, uses metal sounds. */
     public static final ChestSpec EMERALD_SPEC = new ChestSpec(
             "emerald", 90,
             "block." + FullChest.MODID + ".emerald_chest",
@@ -120,6 +141,7 @@ public final class ChestSpecs {
             )
     );
 
+    /** Diamond chest — huge capacity, light blue tint, uses metal sounds. */
     public static final ChestSpec DIAMOND_SPEC = new ChestSpec(
             "diamond", 108,
             "block." + FullChest.MODID + ".diamond_chest",
@@ -138,6 +160,7 @@ public final class ChestSpecs {
             )
     );
 
+    /** Obsidian chest — massive capacity, dark purple tint, stone sounds. */
     public static final ChestSpec OBSIDIAN_SPEC = new ChestSpec(
             "obsidian", 135,
             "block." + FullChest.MODID + ".obsidian_chest",
@@ -156,6 +179,7 @@ public final class ChestSpecs {
             )
     );
 
+    /** Netherite chest — maximum capacity, dark gray tint, metal sounds. */
     public static final ChestSpec NETHERITE_SPEC = new ChestSpec(
             "netherite", 162,
             "block." + FullChest.MODID + ".netherite_chest",
@@ -174,15 +198,19 @@ public final class ChestSpecs {
             )
     );
 
-    // Central registry of specs for iteration (datagen, etc.)
+    /** Immutable list of all registered chest specs in this mod. */
     public static final List<ChestSpec> ALL = List.of(
             DIRT_SPEC, STONE_SPEC, COPPER_SPEC, IRON_SPEC, GOLD_SPEC,
             EMERALD_SPEC, DIAMOND_SPEC, OBSIDIAN_SPEC, NETHERITE_SPEC
     );
 
-    public static final Map<String, ChestSpec> BY_ID = ALL.stream().collect(Collectors.toUnmodifiableMap(ChestSpec::id, s -> s));
+    /** Immutable map of chest specs by their {@link ChestSpec#id() id}. */
+    public static final Map<String, ChestSpec> BY_ID =
+            ALL.stream().collect(Collectors.toUnmodifiableMap(ChestSpec::id, s -> s));
 
+    /** Convenience method to get all specs as an array. */
     public static ChestSpec[] values() { return ALL.toArray(ChestSpec[]::new); }
 
+    /** Utility class; prevent instantiation. */
     private ChestSpecs() {}
 }

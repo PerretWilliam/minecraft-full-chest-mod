@@ -5,8 +5,6 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -17,6 +15,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -31,20 +30,36 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Block Entity for the Chest Forge.
+ * <p>
+ * Acts as a custom crafting station for upgrading chests.
+ * Handles inventory storage, fuel management, crafting progress,
+ * recipe matching, and synchronization with the UI.
+ */
 public class ChestForgeBlockEntity extends BlockEntity
         implements MenuProvider, net.minecraft.world.Container {
 
-    public static final int SLOT_FUEL = 0;
-    public static final int SLOT_OUT  = 1;
-    public static final int SLOT_IN_START = 2;
-    public static final int INPUT_COUNT   = 9;
-    public static final int CONTAINER_SIZE = SLOT_IN_START + INPUT_COUNT; // = 11
+    /* =========================
+       Inventory Slot Indexes
+       ========================= */
+    public static final int SLOT_FUEL = 0; // Lava bucket slot
+    public static final int SLOT_OUT  = 1; // Crafting output slot
+    public static final int SLOT_IN_START = 2; // First input slot (3x3 grid)
+    public static final int INPUT_COUNT   = 9; // Number of crafting input slots
+    public static final int CONTAINER_SIZE = SLOT_IN_START + INPUT_COUNT; // Total inventory size (11)
 
-    private int burnTime;        // ticks remaining
-    private int burnTimeTotal;   // ticks total (fuel)
-    private int progress;        // craft progress
-    private int maxProgress = 200; // craft duration for current recipe (ticks)
+    /* =========================
+       Crafting & Fuel State
+       ========================= */
+    private int burnTime; // Remaining fuel time (ticks)
+    private int burnTimeTotal; // Total fuel time (ticks) for the current fuel item
+    private int progress; // Current recipe progress (ticks)
+    private int maxProgress = 200; // Required ticks to complete current recipe
 
+    /* =========================
+       Data Synchronization
+       ========================= */
     private final ContainerData data = new ContainerData() {
         private final int[] vals = new int[4]; // 0=burn, 1=burnTotal, 2=progress, 3=maxProgress
         @Override public int get(int i) { return vals[i]; }
@@ -53,13 +68,18 @@ public class ChestForgeBlockEntity extends BlockEntity
     };
     public ContainerData data() { return data; }
 
+    /* =========================
+       Inventory Storage
+       ========================= */
     private final NonNullList<ItemStack> items = NonNullList.withSize(CONTAINER_SIZE, ItemStack.EMPTY);
 
     public ChestForgeBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.CHEST_FORGE_BE.get(), pos, state);
     }
 
-    // Container impl
+    /* =========================
+       Inventory Implementation
+       ========================= */
     @Override public int getContainerSize() { return items.size(); }
     @Override public boolean isEmpty() { for (var s: items) if (!s.isEmpty()) return false; return true; }
     @NotNull @Override public ItemStack getItem(int i) { return items.get(i); }
@@ -69,7 +89,9 @@ public class ChestForgeBlockEntity extends BlockEntity
     @Override public void clearContent() { items.clear(); setChanged(); }
     @Override public boolean stillValid(Player p) { return p.distanceToSqr(worldPosition.getCenter()) <= 64.0D; }
 
-    // Save/Load
+    /* =========================
+       NBT Save / Load
+       ========================= */
     @Override
     protected void saveAdditional(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
@@ -90,21 +112,29 @@ public class ChestForgeBlockEntity extends BlockEntity
         maxProgress = tag.contains("MaxProg") ? tag.getInt("MaxProg") : 200;
     }
 
-    // MenuProvider
+    /* =========================
+       Menu Provider
+       ========================= */
     @NotNull
     @Override public Component getDisplayName() { return Component.translatable("block." + FullChest.MODID + ".chest_forge"); }
+
     @Override
     public AbstractContainerMenu createMenu(int id, @NotNull Inventory inv, @NotNull Player player) {
         return new ChestForgeMenu(id, inv, this, this, this.data());
     }
 
-    // Exposition
+    /* =========================
+       Accessors for UI
+       ========================= */
     public boolean isBurning() { return burnTime > 0; }
     public int burnTime() { return burnTime; }
     public int burnTimeTotal() { return burnTimeTotal; }
     public int progress() { return progress; }
     public int maxProgress() { return maxProgress; }
 
+    /* =========================
+       Server Tick Logic
+       ========================= */
     public static void serverTick(Level level, BlockPos pos, BlockState state, ChestForgeBlockEntity be) {
         if (level.isClientSide) return;
 
@@ -142,6 +172,7 @@ public class ChestForgeBlockEntity extends BlockEntity
             level.setBlock(pos, state, 3);
         }
 
+        // Sync values to client
         be.data.set(0, be.burnTime);
         be.data.set(1, be.burnTimeTotal);
         be.data.set(2, be.progress);
@@ -150,9 +181,12 @@ public class ChestForgeBlockEntity extends BlockEntity
         be.setChanged();
     }
 
-    private boolean tryStartFuel() {
+    /* =========================
+       Fuel Handling
+       ========================= */
+    private void tryStartFuel() {
         ItemStack fuel = items.get(SLOT_FUEL);
-        if (fuel.isEmpty() || !fuel.is(Items.LAVA_BUCKET)) return false;
+        if (fuel.isEmpty() || !fuel.is(Items.LAVA_BUCKET)) return;
 
         this.burnTimeTotal = this.burnTime = Math.max(1, this.maxProgress);
 
@@ -162,9 +196,11 @@ public class ChestForgeBlockEntity extends BlockEntity
             items.set(SLOT_FUEL, remainder);
         }
         setChanged();
-        return true;
     }
 
+    /* =========================
+       Recipe Handling
+       ========================= */
     private Optional<ChestForgeRecipe> findMatchingRecipe() {
         if (this.level == null) return Optional.empty();
 
@@ -175,7 +211,7 @@ public class ChestForgeBlockEntity extends BlockEntity
 
         return this.level.getRecipeManager()
                 .getRecipeFor(ModRecipeTypes.CHEST_FORGE_TYPE.get(), input, this.level)
-                .map(rh -> rh.value());
+                .map(RecipeHolder::value);
     }
 
     private boolean canOutput(ChestForgeRecipe r) {
@@ -187,18 +223,19 @@ public class ChestForgeBlockEntity extends BlockEntity
     }
 
     private void craft(ChestForgeRecipe r) {
-        // Consomme 1 item par case de pattern (classique shaped)
+        // Consume 1 item from each recipe ingredient slot
         int w = r.width(), h = r.height();
         for (int y = 0; y < h; y++) {
             for (int x = 0; x < w; x++) {
                 var ing = r.ingredients().get(x + y * w);
                 if (ing == Ingredient.EMPTY) continue;
-                int slot = SLOT_IN_START + (x + y * 3); // grille 3x3
+                int slot = SLOT_IN_START + (x + y * 3); // Fixed 3x3 grid
                 ItemStack st = items.get(slot);
                 if (!st.isEmpty()) st.shrink(1);
             }
         }
 
+        // Place output in the output slot
         ItemStack res = r.output();
         ItemStack out = items.get(SLOT_OUT);
         if (out.isEmpty()) {

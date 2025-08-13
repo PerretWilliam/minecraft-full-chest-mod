@@ -13,31 +13,28 @@ import org.jetbrains.annotations.NotNull;
 import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
 
-public class ChestForgeJsonProvider implements DataProvider {
+/**
+ * Data generator for the "chest_forge" custom recipes.
+ * <p>
+ * This provider creates JSON recipe files for all chest types
+ * (stone, copper, iron, gold, diamond, emerald, obsidian, netherite)
+ * as well as their corresponding upgrade items.
+ * <p>
+ * The generated JSON files are placed in the data pack's recipe folder.
+ */
+public record ChestForgeJsonProvider(PackOutput packOutput) implements DataProvider {
 
-    private final PackOutput packOutput;
-
-    public ChestForgeJsonProvider(PackOutput packOutput) {
-        this.packOutput = packOutput;
-    }
-
+    /**
+     * Generates all recipe JSON files for chests and upgrades.
+     */
     @Override
     public @NotNull CompletableFuture<?> run(@NotNull CachedOutput cache) {
+        // Path provider for JSON recipe files inside the data pack
         var pathProvider = packOutput.createPathProvider(PackOutput.Target.DATA_PACK, "recipe");
 
-        /* Put your custom chests here, here is an example :
-        JsonObject ironChest = ChestForgeRecipeBuilder.chestForge(ModItems.IRON_CHEST.get()) // Output
-                .pattern("MMM")
-                .pattern("MCM")
-                .pattern("MMM")
-                .define('M', Items.IRON_INGOT)
-                .define('C', ModItems.STONE_CHEST.get())
-                .time(300) // Smelting Time
-                .mirror(true)
-                .toJson();
-        Path ironChestPath = pathProvider.json(ResourceLocation.fromNamespaceAndPath(FullChest.MODID, "iron_chest"));
-        CompletableFuture<?> ironChestRecipe = DataProvider.saveStable(cache, ironChest, ironChestPath);
-         */
+        /* ==================================================
+         * CHEST RECIPES
+         * ================================================== */
 
         // Stone Chest
         JsonObject stoneChest = ChestForgeRecipeBuilder.chestForge(ModItems.STONE_CHEST.get())
@@ -46,8 +43,8 @@ public class ChestForgeJsonProvider implements DataProvider {
                 .pattern("MMM")
                 .define('M', Items.STONE)
                 .define('C', ModItems.DIRT_CHEST.get())
-                .time(300)
-                .mirror(true)
+                .time(300)       // Crafting time in ticks
+                .mirror(true)    // Recipe can be mirrored
                 .toJson();
         Path stoneChestPath = pathProvider.json(ResourceLocation.fromNamespaceAndPath(FullChest.MODID, "stone_chest"));
         CompletableFuture<?> stoneChestRecipe = DataProvider.saveStable(cache, stoneChest, stoneChestPath);
@@ -117,7 +114,6 @@ public class ChestForgeJsonProvider implements DataProvider {
         Path emeraldChestPath = pathProvider.json(ResourceLocation.fromNamespaceAndPath(FullChest.MODID, "emerald_chest"));
         CompletableFuture<?> emeraldChestRecipe = DataProvider.saveStable(cache, emeraldChest, emeraldChestPath);
 
-
         // Obsidian Chest
         JsonObject obsidianChest = ChestForgeRecipeBuilder.chestForge(ModItems.OBSIDIAN_CHEST.get())
                 .pattern("MMM")
@@ -144,9 +140,16 @@ public class ChestForgeJsonProvider implements DataProvider {
         Path netheriteChestPath = pathProvider.json(ResourceLocation.fromNamespaceAndPath(FullChest.MODID, "netherite_chest"));
         CompletableFuture<?> netheriteChestRecipe = DataProvider.saveStable(cache, netheriteChest, netheriteChestPath);
 
+        /* ==================================================
+         * UPGRADE ITEM RECIPES
+         * ================================================== */
 
-        /* UPGRADE RECIPES */
-        // Stone Chest Upgrade
+        // Each upgrade follows the same pattern:
+        // - Outer ring made of upgrade material
+        // - Center is the previous tier's upgrade item
+        // - 300 ticks crafting time
+        // - Mirrored pattern allowed
+
         JsonObject dirtToStoneUpgrade = ChestForgeRecipeBuilder.chestForge(ModItems.DIRT_TO_STONE_UPGRADE.get())
                 .pattern("SSS")
                 .pattern("SCS")
@@ -159,7 +162,6 @@ public class ChestForgeJsonProvider implements DataProvider {
         Path dirtToStoneUpgradePath = pathProvider.json(ResourceLocation.fromNamespaceAndPath(FullChest.MODID, "dirt_to_stone_upgrade"));
         CompletableFuture<?> dirtToStoneUpgradeRecipe = DataProvider.saveStable(cache, dirtToStoneUpgrade, dirtToStoneUpgradePath);
 
-        // Copper Chest Upgrade
         JsonObject stoneToCopperUpgrade = ChestForgeRecipeBuilder.chestForge(ModItems.STONE_TO_COPPER_UPGRADE.get())
                 .pattern("CCC")
                 .pattern("CSC")
@@ -172,7 +174,6 @@ public class ChestForgeJsonProvider implements DataProvider {
         Path stoneToCopperUpgradePath = pathProvider.json(ResourceLocation.fromNamespaceAndPath(FullChest.MODID, "stone_to_copper_upgrade"));
         CompletableFuture<?> stoneToCopperUpgradeRecipe = DataProvider.saveStable(cache, stoneToCopperUpgrade, stoneToCopperUpgradePath);
 
-        // Iron Chest Upgrade
         JsonObject copperToIronUpgrade = ChestForgeRecipeBuilder.chestForge(ModItems.COPPER_TO_IRON_UPGRADE.get())
                 .pattern("III")
                 .pattern("ICI")
@@ -185,7 +186,6 @@ public class ChestForgeJsonProvider implements DataProvider {
         Path copperToIronUpgradePath = pathProvider.json(ResourceLocation.fromNamespaceAndPath(FullChest.MODID, "copper_to_iron_upgrade"));
         CompletableFuture<?> copperToIronUpgradeRecipe = DataProvider.saveStable(cache, copperToIronUpgrade, copperToIronUpgradePath);
 
-        // Gold Chest Upgrade
         JsonObject ironToGoldUpgrade = ChestForgeRecipeBuilder.chestForge(ModItems.IRON_TO_GOLD_UPGRADE.get())
                 .pattern("GGG")
                 .pattern("GIG")
@@ -198,7 +198,6 @@ public class ChestForgeJsonProvider implements DataProvider {
         Path ironToGoldUpgradePath = pathProvider.json(ResourceLocation.fromNamespaceAndPath(FullChest.MODID, "iron_to_gold_upgrade"));
         CompletableFuture<?> ironToGoldUpgradeRecipe = DataProvider.saveStable(cache, ironToGoldUpgrade, ironToGoldUpgradePath);
 
-        // Diamond Chest Upgrade
         JsonObject goldToDiamondUpgrade = ChestForgeRecipeBuilder.chestForge(ModItems.GOLD_TO_DIAMOND_UPGRADE.get())
                 .pattern("DDD")
                 .pattern("DGD")
@@ -211,7 +210,6 @@ public class ChestForgeJsonProvider implements DataProvider {
         Path goldToDiamondUpgradePath = pathProvider.json(ResourceLocation.fromNamespaceAndPath(FullChest.MODID, "gold_to_diamond_upgrade"));
         CompletableFuture<?> goldToDiamondUpgradeRecipe = DataProvider.saveStable(cache, goldToDiamondUpgrade, goldToDiamondUpgradePath);
 
-        // Emerald Chest Upgrade
         JsonObject diamondToEmeraldUpgrade = ChestForgeRecipeBuilder.chestForge(ModItems.DIAMOND_TO_EMERALD_UPGRADE.get())
                 .pattern("EEE")
                 .pattern("EDE")
@@ -224,7 +222,6 @@ public class ChestForgeJsonProvider implements DataProvider {
         Path diamondToEmeraldUpgradePath = pathProvider.json(ResourceLocation.fromNamespaceAndPath(FullChest.MODID, "diamond_to_emerald_upgrade"));
         CompletableFuture<?> diamondToEmeraldUpgradeRecipe = DataProvider.saveStable(cache, diamondToEmeraldUpgrade, diamondToEmeraldUpgradePath);
 
-        // Obsidian Chest Upgrade
         JsonObject emeraldToObsidianUpgrade = ChestForgeRecipeBuilder.chestForge(ModItems.EMERALD_TO_OBSIDIAN_UPGRADE.get())
                 .pattern("OOO")
                 .pattern("OEO")
@@ -237,7 +234,6 @@ public class ChestForgeJsonProvider implements DataProvider {
         Path emeraldToObsidianUpgradePath = pathProvider.json(ResourceLocation.fromNamespaceAndPath(FullChest.MODID, "emerald_to_obsidian_upgrade"));
         CompletableFuture<?> emeraldToObsidianUpgradeRecipe = DataProvider.saveStable(cache, emeraldToObsidianUpgrade, emeraldToObsidianUpgradePath);
 
-        // Netherite Chest Upgrade
         JsonObject obsidianToNetheriteUpgrade = ChestForgeRecipeBuilder.chestForge(ModItems.OBSIDIAN_TO_NETHERITE_UPGRADE.get())
                 .pattern("NNN")
                 .pattern("NON")
@@ -250,10 +246,14 @@ public class ChestForgeJsonProvider implements DataProvider {
         Path obsidianToNetheriteUpgradePath = pathProvider.json(ResourceLocation.fromNamespaceAndPath(FullChest.MODID, "obsidian_to_netherite_upgrade"));
         CompletableFuture<?> obsidianToNetheriteUpgradeRecipe = DataProvider.saveStable(cache, obsidianToNetheriteUpgrade, obsidianToNetheriteUpgradePath);
 
-
-        return CompletableFuture.allOf(stoneChestRecipe, copperChestRecipe, ironChestRecipe, goldChestRecipe, diamondChestRecipe, emeraldChestRecipe, obsidianChestRecipe, netheriteChestRecipe,
-                dirtToStoneUpgradeRecipe, stoneToCopperUpgradeRecipe, copperToIronUpgradeRecipe, ironToGoldUpgradeRecipe, goldToDiamondUpgradeRecipe,
-                diamondToEmeraldUpgradeRecipe, emeraldToObsidianUpgradeRecipe, obsidianToNetheriteUpgradeRecipe);
+        // Return all futures combined
+        return CompletableFuture.allOf(
+                stoneChestRecipe, copperChestRecipe, ironChestRecipe, goldChestRecipe,
+                diamondChestRecipe, emeraldChestRecipe, obsidianChestRecipe, netheriteChestRecipe,
+                dirtToStoneUpgradeRecipe, stoneToCopperUpgradeRecipe, copperToIronUpgradeRecipe,
+                ironToGoldUpgradeRecipe, goldToDiamondUpgradeRecipe, diamondToEmeraldUpgradeRecipe,
+                emeraldToObsidianUpgradeRecipe, obsidianToNetheriteUpgradeRecipe
+        );
     }
 
     @Override

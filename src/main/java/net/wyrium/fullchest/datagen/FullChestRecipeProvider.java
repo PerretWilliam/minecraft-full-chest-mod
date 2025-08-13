@@ -13,25 +13,41 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * Generates vanilla crafting recipes for FullChest using the standard data generator.
+ * <p>
+ * Covers:
+ * <ul>
+ *   <li><b>Dirt Chest</b> (shaped recipe using the dirt tag + vanilla chest)</li>
+ *   <li><b>Chest Forge</b> (polished blackstone, lava buckets, crafting table)</li>
+ *   <li><b>Base Chest Upgrade</b> (planks + vanilla chest)</li>
+ * </ul>
+ */
 public class FullChestRecipeProvider extends RecipeProvider {
-
 
     public FullChestRecipeProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
         super(output, registries);
     }
 
+    /**
+     * Emits all vanilla-style shaped recipes used by the mod.
+     * Custom forge recipes are generated separately via {@code ChestForgeJsonProvider}.
+     */
     @Override
     protected void buildRecipes(@NotNull RecipeOutput out) {
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.DIRT_CHEST.get()) // Chest Dirt
+
+        // --- Dirt Chest (vanilla crafting) ---
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.DIRT_CHEST.get())
                 .pattern("DDD")
                 .pattern("DCD")
                 .pattern("DDD")
-                .define('D', ItemTags.DIRT)
-                .define('C', Items.CHEST)
+                .define('D', ItemTags.DIRT)   // any dirt variant
+                .define('C', Items.CHEST)    // vanilla chest
                 .unlockedBy("has_dirt", has(ItemTags.DIRT))
                 .save(out);
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.CHEST_FORGE.get()) // Forge
+        // --- Chest Forge (workstation for custom chest forging) ---
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.CHEST_FORGE.get())
                 .pattern("PBP")
                 .pattern("BCB")
                 .pattern("PBP")
@@ -41,11 +57,12 @@ public class FullChestRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_lava_bucket", has(Items.LAVA_BUCKET))
                 .save(out);
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.BASE_CHEST_UPGRADE.get()) // Base Chest Upgrade
+        // --- Base Chest Upgrade (entry upgrade item for the progression chain) ---
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.BASE_CHEST_UPGRADE.get())
                 .pattern("WWW")
                 .pattern("WCW")
                 .pattern("WWW")
-                .define('W', ItemTags.PLANKS)
+                .define('W', ItemTags.PLANKS) // any wood planks
                 .define('C', Items.CHEST)
                 .unlockedBy("has_chest", has(Items.CHEST))
                 .save(out);

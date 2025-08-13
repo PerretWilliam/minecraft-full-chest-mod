@@ -1,7 +1,8 @@
 package net.wyrium.fullchest.datagen;
 
 import net.minecraft.advancements.*;
-import net.minecraft.advancements.critereon.*;
+import net.minecraft.advancements.critereon.InventoryChangeTrigger;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.advancements.AdvancementSubProvider;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -10,32 +11,45 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 import net.wyrium.fullchest.FullChest;
 import net.wyrium.fullchest.item.ModItems;
-import net.minecraft.core.HolderLookup;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
+/**
+ * Defines and generates all advancements for the FullChest mod.
+ * <p>
+ * This includes:
+ * <ul>
+ *   <li>The root advancement for obtaining the Chest Forge</li>
+ *   <li>Tier progression advancements for each chest material</li>
+ *   <li>Advancements for collecting all chest types</li>
+ *   <li>Advancements for each chest upgrade step</li>
+ *   <li>Challenge advancements for collecting all upgrades</li>
+ * </ul>
+ */
 public class FullChestAdvancements implements AdvancementSubProvider {
 
     @Override
     public void generate(HolderLookup.@NotNull Provider provider, Consumer<AdvancementHolder> consumer) {
 
-        // ROOT
+        // --- ROOT ADVANCEMENT (Obtain Chest Forge) ---
         Advancement.Builder forgeBuilder = Advancement.Builder.advancement()
                 .display(
                         ModItems.CHEST_FORGE.get(),
-                        Component.translatable("advancement.fullchest.forge.title"),
-                        Component.translatable("advancement.fullchest.forge.desc"),
-                        ResourceLocation.fromNamespaceAndPath("minecraft","textures/gui/advancements/backgrounds/stone.png"),
+                        Component.translatable("advancement." + FullChest.MODID + ".forge.title"),
+                        Component.translatable("advancement." + FullChest.MODID + ".forge.desc"),
+                        ResourceLocation.fromNamespaceAndPath("minecraft", "textures/gui/advancements/backgrounds/stone.png"),
                         AdvancementType.TASK,
                         true,
                         true,
                         false
-                ).addCriterion("has_forge", InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.CHEST_FORGE.get()));
+                )
+                .addCriterion("has_forge", InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.CHEST_FORGE.get()));
 
         AdvancementHolder FORGE = forgeBuilder.build(id("forge"));
         consumer.accept(FORGE);
 
+        // --- CHEST MATERIAL TIER PROGRESSION ---
         AdvancementHolder DIRT = chestTier("dirt", ModItems.DIRT_CHEST.get(), FORGE, AdvancementType.TASK, consumer);
         AdvancementHolder STONE = chestTier("stone", ModItems.STONE_CHEST.get(), DIRT, AdvancementType.TASK, consumer);
         AdvancementHolder COPPER = chestTier("copper", ModItems.COPPER_CHEST.get(), STONE, AdvancementType.TASK, consumer);
@@ -46,12 +60,13 @@ public class FullChestAdvancements implements AdvancementSubProvider {
         AdvancementHolder OBSIDIAN = chestTier("obsidian", ModItems.OBSIDIAN_CHEST.get(), EMERALD, AdvancementType.GOAL, consumer);
         AdvancementHolder NETHERITE = chestTier("netherite", ModItems.NETHERITE_CHEST.get(), OBSIDIAN, AdvancementType.CHALLENGE, consumer);
 
+        // --- COLLECT ALL CHESTS ---
         AdvancementHolder ALL_CHESTS = Advancement.Builder.advancement()
                 .parent(NETHERITE)
                 .display(
                         ModItems.STONE_CHEST.get(),
-                        Component.translatable("advancement.fullchest.all_chests.title"),
-                        Component.translatable("advancement.fullchest.all_chests.desc"),
+                        Component.translatable("advancement." + FullChest.MODID + ".all_chests.title"),
+                        Component.translatable("advancement." + FullChest.MODID + ".all_chests.desc"),
                         null,
                         AdvancementType.CHALLENGE,
                         true,
@@ -71,57 +86,64 @@ public class FullChestAdvancements implements AdvancementSubProvider {
 
         consumer.accept(ALL_CHESTS);
 
-        /* UPGRADE ADVANCEMENTS */
-        AdvancementHolder UPG_DIRT_TO_STONE = upgradeAdvManualAward(
+        // --- UPGRADE ADVANCEMENTS ---
+        AdvancementHolder UPG_DIRT_TO_STONE = upgradeAdvancementManualAward(
                 "upgrade/dirt_to_stone",
                 ModItems.DIRT_TO_STONE_UPGRADE.get(),
                 DIRT,
                 AdvancementType.TASK,
                 consumer);
 
-        AdvancementHolder UPG_STONE_TO_COPPER = upgradeAdvManualAward(
+        AdvancementHolder UPG_STONE_TO_COPPER = upgradeAdvancementManualAward(
                 "upgrade/stone_to_copper",
                 ModItems.STONE_TO_COPPER_UPGRADE.get(),
                 UPG_DIRT_TO_STONE,
                 AdvancementType.TASK,
                 consumer);
-        AdvancementHolder UPG_COPPER_TO_IRON = upgradeAdvManualAward(
+
+        AdvancementHolder UPG_COPPER_TO_IRON = upgradeAdvancementManualAward(
                 "upgrade/copper_to_iron",
                 ModItems.COPPER_TO_IRON_UPGRADE.get(),
                 UPG_STONE_TO_COPPER,
                 AdvancementType.TASK,
                 consumer);
-        AdvancementHolder UPG_IRON_TO_GOLD = upgradeAdvManualAward(
+
+        AdvancementHolder UPG_IRON_TO_GOLD = upgradeAdvancementManualAward(
                 "upgrade/iron_to_gold",
                 ModItems.IRON_TO_GOLD_UPGRADE.get(),
                 UPG_COPPER_TO_IRON,
                 AdvancementType.TASK,
                 consumer);
-        AdvancementHolder UPG_GOLD_TO_DIAMOND = upgradeAdvManualAward(
+
+        AdvancementHolder UPG_GOLD_TO_DIAMOND = upgradeAdvancementManualAward(
                 "upgrade/gold_to_diamond",
                 ModItems.GOLD_TO_DIAMOND_UPGRADE.get(),
                 UPG_IRON_TO_GOLD,
                 AdvancementType.GOAL,
                 consumer);
-        AdvancementHolder UPG_DIAMOND_TO_EMERALD = upgradeAdvManualAward(
+
+        AdvancementHolder UPG_DIAMOND_TO_EMERALD = upgradeAdvancementManualAward(
                 "upgrade/diamond_to_emerald",
                 ModItems.DIAMOND_TO_EMERALD_UPGRADE.get(),
                 UPG_GOLD_TO_DIAMOND,
                 AdvancementType.GOAL,
                 consumer);
-        AdvancementHolder UPG_EMERALD_TO_OBSIDIAN = upgradeAdvManualAward(
+
+        AdvancementHolder UPG_EMERALD_TO_OBSIDIAN = upgradeAdvancementManualAward(
                 "upgrade/emerald_to_obsidian",
                 ModItems.EMERALD_TO_OBSIDIAN_UPGRADE.get(),
                 UPG_DIAMOND_TO_EMERALD,
                 AdvancementType.GOAL,
                 consumer);
-        AdvancementHolder UPG_OBSIDIAN_TO_NETHERITE = upgradeAdvManualAward(
+
+        AdvancementHolder UPG_OBSIDIAN_TO_NETHERITE = upgradeAdvancementManualAward(
                 "upgrade/obsidian_to_netherite",
                 ModItems.OBSIDIAN_TO_NETHERITE_UPGRADE.get(),
                 UPG_EMERALD_TO_OBSIDIAN,
                 AdvancementType.CHALLENGE,
                 consumer);
 
+        // --- COLLECT ALL UPGRADES ---
         AdvancementHolder ALL_CHESTS_UPGRADE = Advancement.Builder.advancement()
                 .parent(UPG_OBSIDIAN_TO_NETHERITE)
                 .display(
@@ -141,13 +163,15 @@ public class FullChestAdvancements implements AdvancementSubProvider {
         consumer.accept(ALL_CHESTS_UPGRADE);
     }
 
-
+    /**
+     * Creates an advancement for unlocking a specific chest tier.
+     */
     private static AdvancementHolder chestTier(
             String name,
             ItemLike icon,
             AdvancementHolder parent,
             AdvancementType frame,
-            java.util.function.Consumer<AdvancementHolder> consumer
+            Consumer<AdvancementHolder> consumer
     ) {
         var builder = Advancement.Builder.advancement()
                 .parent(parent)
@@ -171,12 +195,16 @@ public class FullChestAdvancements implements AdvancementSubProvider {
         return holder;
     }
 
-    private static AdvancementHolder upgradeAdvManualAward(
+    /**
+     * Creates an upgrade advancement that is manually awarded by the mod's logic.
+     * Uses a dummy impossible criterion (holding AIR) so it can't trigger naturally.
+     */
+    private static AdvancementHolder upgradeAdvancementManualAward(
             String idPath,
             Item icon,
             AdvancementHolder parent,
             AdvancementType frame,
-            java.util.function.Consumer<AdvancementHolder> out
+            Consumer<AdvancementHolder> out
     ) {
         Advancement.Builder b = Advancement.Builder.advancement()
                 .parent(parent)
@@ -197,6 +225,9 @@ public class FullChestAdvancements implements AdvancementSubProvider {
         return holder;
     }
 
+    /**
+     * Helper to create a mod-specific {@link ResourceLocation} for advancements.
+     */
     private static ResourceLocation id(String path) {
         return ResourceLocation.fromNamespaceAndPath(FullChest.MODID, path);
     }

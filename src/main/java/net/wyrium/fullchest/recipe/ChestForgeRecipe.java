@@ -19,15 +19,31 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class ChestForgeRecipe implements Recipe<CraftingInput> {
+/**
+ * Shaped, paged-forge-style recipe used by the Chest Forge.
+ * <p>
+ * Characteristics:
+ * <ul>
+ *   <li>Shaped grid defined by {@code width}×{@code height}.</li>
+ *   <li>Ingredients stored row-major in a fixed-size {@link NonNullList} of length {@code width*height}.</li>
+ *   <li>Optional horizontal mirroring (left-right).</li>
+ *   <li>Custom processing time in ticks.</li>
+ * </ul>
+ *
+ * @param ingredients size = width * height
+ * @param time        ticks
+ */
+public record ChestForgeRecipe(int width, int height, NonNullList<Ingredient> ingredients, ItemStack result, int time,
+                               boolean mirror) implements Recipe<CraftingInput> {
 
-    private final int width;
-    private final int height;
-    private final NonNullList<Ingredient> ingredients; // size = width * height
-    private final ItemStack result;
-    private final int time;      // ticks
-    private final boolean mirror;
-
+    /**
+     * @param width       recipe width
+     * @param height      recipe height
+     * @param ingredients row-major list sized to width*height
+     * @param result      output stack (copied for safety)
+     * @param time        craft time in ticks (clamped to ≥ 1)
+     * @param mirror      whether horizontal mirroring is allowed
+     */
     public ChestForgeRecipe(int width, int height,
                             NonNullList<Ingredient> ingredients,
                             ItemStack result, int time, boolean mirror) {
@@ -39,23 +55,38 @@ public class ChestForgeRecipe implements Recipe<CraftingInput> {
         this.mirror = mirror;
     }
 
-    public int time() { return time; }
-    public ItemStack output() { return result.copy(); }
-    public int width() { return width; }
-    public int height() { return height; }
-    public NonNullList<Ingredient> ingredients() { return ingredients; }
+    /**
+     * Craft time in ticks.
+     */
+    @Override
+    public int time() {
+        return time;
+    }
 
+    /**
+     * Defensive copy of the result.
+     */
+    public ItemStack output() {
+        return result.copy();
+    }
+
+    /**
+     * Server-only match check against a {@link CraftingInput} of the exact same dimensions.
+     * Tries normal orientation first, then mirrored if enabled.
+     */
     @Override
     public boolean matches(@NotNull CraftingInput input, Level level) {
         if (level.isClientSide) return false;
-
         if (input.width() != width || input.height() != height) return false;
 
-        // Test motif direct
+        // Direct pattern
         if (checkMatch(input, false)) return true;
         return mirror && checkMatch(input, true);
     }
 
+    /**
+     * Compares each slot against the ingredient grid, optionally mirrored horizontally.
+     */
     private boolean checkMatch(CraftingInput input, boolean mirrored) {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
@@ -80,21 +111,78 @@ public class ChestForgeRecipe implements Recipe<CraftingInput> {
         return result.copy();
     }
 
-    @Override public boolean canCraftInDimensions(int w, int h) { return w >= width && h >= height; }
+    /**
+     * Vanilla helper: can this recipe fit inside a w×h crafting area?
+     */
+    @Override
+    public boolean canCraftInDimensions(int w, int h) {
+        return w >= width && h >= height;
+    }
 
-    @NotNull @Override
-    public NonNullList<Ingredient> getIngredients() { return ingredients; }
+    @NotNull
+    @Override
+    public NonNullList<Ingredient> getIngredients() {
+        return ingredients;
+    }
 
-    @NotNull @Override public RecipeSerializer<?> getSerializer() { return ModRecipeTypes.CHEST_FORGE_SERIALIZER.get(); }
-    @NotNull @Override public RecipeType<?> getType() { return ModRecipeTypes.CHEST_FORGE_TYPE.get(); }
-    @Override public boolean isSpecial() { return true; }
+    @NotNull
+    @Override
+    public RecipeSerializer<?> getSerializer() {
+        return ModRecipeTypes.CHEST_FORGE_SERIALIZER.get();
+    }
+
+    @NotNull
+    @Override
+    public RecipeType<?> getType() {
+        return ModRecipeTypes.CHEST_FORGE_TYPE.get();
+    }
+
+    /**
+     * Marked special so it won't show in the vanilla recipe book by default.
+     */
+    @Override
+    public boolean isSpecial() {
+        return true;
+    }
 
     /* ===== Serializer ===== */
 
+    /**
+     * Serializer/codec for {@link ChestForgeRecipe}.
+     * <p>
+     * JSON format (example):
+     * <pre>
+     * {
+     *   "type": "fullchest:chest_forge",
+     *   "pattern": [
+     *     "A A",
+     *     " B ",
+     *     "A A"
+     *   ],
+     *   "key": {
+     *     "A": { "item": "minecraft:iron_ingot" },
+     *     "B": { "item": "minecraft:chest" }
+     *   },
+     *   "result": { "item": "fullchest:iron_chest" },
+     *   "time": 200,
+     *   "mirror": true
+     * }
+     * </pre>
+     */
     public static class Serializer implements RecipeSerializer<ChestForgeRecipe> {
 
+        /**
+         * JSON → recipe codec.
+         * <p>
+         * Notes:
+         * <ul>
+         *   <li>{@code pattern} is consumed only for reading (getter returns an empty list).</li>
+         *   <li>{@code key} maps single-character symbols to {@link Ingredient}s.</li>
+         *   <li>{@code result}, {@code time} (default 200), and {@code mirror} (default true) are standard fields.</li>
+         * </ul>
+         */
         public static final MapCodec<ChestForgeRecipe> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
-                Codec.STRING.listOf().fieldOf("pattern").forGetter(r -> List.of()), // lecture seule
+                Codec.STRING.listOf().fieldOf("pattern").forGetter(r -> List.of()), // read-only
                 Codec.unboundedMap(Codec.STRING, Ingredient.CODEC).fieldOf("key").forGetter(r -> Map.of()),
                 ItemStack.CODEC.fieldOf("result").forGetter(r -> r.result),
                 Codec.INT.optionalFieldOf("time", 200).forGetter(r -> r.time),
@@ -104,48 +192,64 @@ public class ChestForgeRecipe implements Recipe<CraftingInput> {
             return new ChestForgeRecipe(p.width, p.height, p.ingredients, result, time, mirror);
         }));
 
+        /**
+         * Network (de)serialization codec.
+         * Writes: width, height, ingredient list, result, time, mirror.
+         * Rebuilds a {@link NonNullList} sized to {@code width*height} and copies ingredients in order.
+         */
         public static final StreamCodec<RegistryFriendlyByteBuf, ChestForgeRecipe> STREAM_CODEC =
                 StreamCodec.composite(
                         ByteBufCodecs.VAR_INT, ChestForgeRecipe::width,
                         ByteBufCodecs.VAR_INT, ChestForgeRecipe::height,
 
-                        // LISTE D’INGRÉDIENTS (codec + getter manquant AVANT)
+                        // Ingredient list (row-major), using the built-in contents stream codec
                         Ingredient.CONTENTS_STREAM_CODEC.apply(ByteBufCodecs.list()),
-                        (ChestForgeRecipe r) -> r.ingredients(),
+                        ChestForgeRecipe::ingredients,
 
-                        // RESULT
+                        // Result stack
                         ItemStack.STREAM_CODEC, r -> r.result,
 
-                        // TIME
+                        // Time
                         ByteBufCodecs.VAR_INT, ChestForgeRecipe::time,
 
-                        // MIRROR
+                        // Mirror flag
                         ByteBufCodecs.BOOL, r -> r.mirror,
 
-                        // CONSTRUCTEUR
-                        (Integer w, Integer h, java.util.List<Ingredient> list, ItemStack res, Integer t, Boolean m) -> {
-                            NonNullList<Ingredient> ings = NonNullList.withSize(w * h, Ingredient.EMPTY);
-                            for (int i = 0; i < Math.min(ings.size(), list.size()); i++) {
-                                ings.set(i, list.get(i));
+                        // Constructor
+                        (Integer w, Integer h, List<Ingredient> list, ItemStack res, Integer t, Boolean m) -> {
+                            NonNullList<Ingredient> ingredients = NonNullList.withSize(w * h, Ingredient.EMPTY);
+                            for (int i = 0; i < Math.min(ingredients.size(), list.size()); i++) {
+                                ingredients.set(i, list.get(i));
                             }
-                            return new ChestForgeRecipe(w, h, ings, res, t, m);
+                            return new ChestForgeRecipe(w, h, ingredients, res, t, m);
                         }
                 );
 
+        @Override
+        public @NotNull MapCodec<ChestForgeRecipe> codec() {
+            return CODEC;
+        }
 
-        @Override public MapCodec<ChestForgeRecipe> codec() { return CODEC; }
-        @Override public StreamCodec<RegistryFriendlyByteBuf, ChestForgeRecipe> streamCodec() { return STREAM_CODEC; }
+        @Override
+        public @NotNull StreamCodec<RegistryFriendlyByteBuf, ChestForgeRecipe> streamCodec() {
+            return STREAM_CODEC;
+        }
 
-        /* -------- util -------- */
+        /* -------- utilities -------- */
 
-        private static record Parsed(int width, int height, NonNullList<Ingredient> ingredients) {}
+        private record Parsed(int width, int height, NonNullList<Ingredient> ingredients) {
+        }
 
+        /**
+         * Parses a shaped pattern and key into a width/height and a row‑major ingredient list.
+         * Trims empty rows/columns around the pattern (like vanilla shaped recipes).
+         */
         private static Parsed parsePatternAndKey(List<String> pattern, Map<String, Ingredient> key) {
             pattern = shrink(pattern);
             int h = pattern.size();
-            int w = h == 0 ? 0 : pattern.get(0).length();
+            int w = h == 0 ? 0 : pattern.getFirst().length();
 
-            // dictionnaire: 'A' -> ingredient
+            // dictionary: 'A' -> ingredient
             Map<Character, Ingredient> dict = new HashMap<>();
             dict.put(' ', Ingredient.EMPTY);
             for (var e : key.entrySet()) {
@@ -166,6 +270,10 @@ public class ChestForgeRecipe implements Recipe<CraftingInput> {
             return new Parsed(w, h, list);
         }
 
+        /**
+         * Trims fully-empty rows/columns from the outer edges of the pattern.
+         * Uses space (' ') as the empty cell character.
+         */
         private static List<String> shrink(List<String> raw) {
             if (raw.isEmpty()) return raw;
 
@@ -197,6 +305,7 @@ public class ChestForgeRecipe implements Recipe<CraftingInput> {
             for (int i = 0; i < s.length(); i++) if (s.charAt(i) != ' ') return i;
             return s.length();
         }
+
         private static int lastNonSpace(String s) {
             for (int i = s.length() - 1; i >= 0; i--) if (s.charAt(i) != ' ') return i;
             return -1;
