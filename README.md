@@ -1,97 +1,120 @@
-# **FullChest – Expanded Chest Storage for Minecraft**
+<div align="center">
 
-FullChest is a Minecraft mod that adds **progressively upgradeable chests** with unique capacities, textures, and sounds.
-Players can upgrade their chests through crafting or special upgrade items, keeping their stored items safe during the process.
+# FullChest
 
----
+[![Minecraft](https://img.shields.io/badge/Minecraft-1.21.1-62B47A?style=for-the-badge&logo=minecraft&logoColor=white)](https://www.minecraft.net/)
+[![NeoForge](https://img.shields.io/badge/NeoForge-latest-E04E14?style=for-the-badge)](https://neoforged.net/)
+[![Java](https://img.shields.io/badge/Java-17+-007396?style=for-the-badge&logo=openjdk&logoColor=white)](https://adoptium.net/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
 
-## **Features**
+**Expanded chest storage for Minecraft — progressively upgradeable chests with unique capacities, textures, and sounds.**
 
-* 🪵 Multiple chest tiers from Dirt to Netherite.
-* 📦 Increased storage capacity per upgrade.
-* 🎨 Unique textures and particle effects for each tier.
-* 🔊 Custom sounds for interaction, breaking, and placing chests.
-* 🛠 Upgrade via crafting or using special upgrade items (shift + right-click).
-* 🎯 Built-in advancements for each upgrade path.
-* ♻ Items remain in the chest when upgrading.
+</div>
 
 ---
 
-## **Requirements**
+## Table of Contents
 
-* **Minecraft**: 1.21.1
-* **NeoForge**: Latest stable release (matching your MC version)
-* **Java**: 17+
-
----
-
-## **Installation (Players)**
-
-1. Download the latest **FullChest** release from [GitHub Releases](#) or [Modrinth/CurseForge](#).
-2. Install [NeoForge](https://neoforged.net/) for your Minecraft version.
-3. Place the downloaded `.jar` file into your Minecraft `mods/` folder.
-4. Launch Minecraft and enjoy!
+- [Features](#features)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Building from Source](#building-from-source)
+- [Mappings](#mappings)
+- [Resources](#resources)
+- [License](#license)
 
 ---
 
-## **Cloning & Building (Developers)**
+## Features
 
-If you want to work on or contribute to FullChest, follow these steps:
+- Multiple chest tiers from Dirt to Netherite
+- Increased storage capacity per upgrade tier
+- Unique textures and particle effects for each tier
+- Custom sounds for interaction, breaking, and placing
+- Upgrade via crafting or special upgrade items (Shift + Right-click)
+- Built-in advancements for each upgrade path
+- Items are preserved inside the chest when upgrading
 
-### **1. Clone the repository**
+---
+
+## Requirements
+
+| Dependency | Version |
+|---|---|
+| Minecraft | 1.21.1 |
+| NeoForge | Latest stable (matching your MC version) |
+| Java | 17+ |
+
+---
+
+## Installation
+
+1. Download the latest **FullChest** release from [GitHub Releases](#) or [Modrinth / CurseForge](#)
+2. Install [NeoForge](https://neoforged.net/) for your Minecraft version
+3. Place the downloaded `.jar` file into your `mods/` folder
+4. Launch Minecraft and enjoy
+
+---
+
+## Building from Source
+
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/PerretWilliam/FullChestMod.git
 cd FullChest
 ```
 
-or
+Or via SSH:
 
 ```bash
 git clone git@github.com:PerretWilliam/FullChestMod.git
 cd FullChest
 ```
 
-### **2. Open in your IDE**
+### 2. Open in your IDE
 
-It is recommended to use:
+Recommended editors:
+- [IntelliJ IDEA](https://www.jetbrains.com/idea/download/) (recommended)
+- [Eclipse](https://www.eclipse.org/downloads/)
 
-* [IntelliJ IDEA](https://www.jetbrains.com/idea/download/) (recommended)
-* [Eclipse](https://www.eclipse.org/downloads/)
+### 3. Set up the project
 
-### **3. Setup project**
+Refresh dependencies:
 
-Run the following commands:
+```bash
+gradlew --refresh-dependencies
+```
 
+Clean build cache (does not delete your code):
 
-#### Refresh dependencies
-```gradlew --refresh-dependencies```
+```bash
+gradle clean
+```
 
-#### Clean build cache (does not delete your code)
-```gradle clean```
+### 4. Build the mod
 
-### **4. Build the mod**
+```bash
+gradlew build
+```
 
-```gradlew build```
-
-The compiled `.jar` will be in `build/libs/`.
-
----
-
-## **Mappings**
-
-FullChest uses **official Mojang mappings** for method and field names in the Minecraft codebase.
-These names are under a specific license: [Mojang License](https://github.com/NeoForged/NeoForm/blob/main/Mojang.md).
+The compiled `.jar` will be output to `build/libs/`.
 
 ---
 
-## **Resources**
+## Mappings
 
-* 📖 [NeoForge Documentation](https://docs.neoforged.net/)
-* 💬 [NeoForge Discord](https://discord.neoforged.net/)
+FullChest uses **official Mojang mappings** for method and field names in the Minecraft codebase. These names are distributed under a specific license: [Mojang License](https://github.com/NeoForged/NeoForm/blob/main/Mojang.md).
 
 ---
 
-## **License**
+## Resources
 
-This project is licensed under the MIT License – see the [LICENSE](LICENSE) file for details.
+- [NeoForge Documentation](https://docs.neoforged.net/)
+- [NeoForge Discord](https://discord.neoforged.net/)
+
+---
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
